@@ -5,9 +5,9 @@
 
 
 // MADE BY:
-//  elad reani: 207688532
-// yarin reani: 208597450
-// marcus eyal: 316532910
+//  elad reani
+// yarin reani 
+// marcus eyal 
 
 void CheckString(char* input, int size) {
     int result;
