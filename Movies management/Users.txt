@@ -1,0 +1,8 @@
+ID: 0     Full Name: elad rz                        Username: level3          Password: level3       Level: 3 
+
+ID: 1     Full Name: employee                       Username: level2          Password: level2       Level: 3 
+
+ID: 2     Full Name: costumer                       Username: level1          Password: level1       Level: 1 
+
+ID: 7     Full Name: shimshon                       Username: shimi           Password: 12345        Level: 1 
+
