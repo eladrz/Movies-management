@@ -4,105 +4,25 @@
 #include <stdbool.h>
 #include <string.h>
 
-typedef struct Date {
-	int day;
-	int month;
-	int year;
-}Date;
-typedef struct movie {
-	char NameMovie[20];
-	char Genre[15];
-	int LengthMovie;
-	int ID;
-	float price;
-	Date ReleaseDate;
-	bool BeastSeller;
-}movie;
-typedef struct node
-{
-	movie data;
-	struct node* next;
-	struct node* previous;
-}Node;
 
 //TODO serch by name 
 
-#define MaxNameMovie 30
-#define MaxGenre 15
 
-Node* createNode(movie* value)
-{ 
-	Node* newNode = (Node*)malloc(sizeof(Node));
-	if (newNode == NULL)
-	{
-		printf("Node creation did not succeed..! Try again..\n");
-		return NULL;
-	}
-	newNode->data.price = value->price;
-	newNode->data.LengthMovie = value->LengthMovie;
-	newNode->data.ID = value->ID;
-	// copy the Date
-	newNode->data.ReleaseDate.day = value->ReleaseDate.day;
-	newNode->data.ReleaseDate.month = value->ReleaseDate.month;
-	newNode->data.ReleaseDate.year = value->ReleaseDate.year;
-	//
-	newNode->data.BeastSeller = value->BeastSeller;
-	strcpy(newNode->data.Genre, value->Genre);
-	strcpy(newNode->data.NameMovie, value->NameMovie);
-	newNode->next = NULL;
-	newNode->previous = NULL;
-	return newNode;
-}
-//free the liked list
-void freeMovieList(Node* listHead)
-{
-	Node* nodeToFree = listHead;
-	while (nodeToFree != NULL) // while not reached the end of the List
-	{
-		listHead = listHead->next;
-		free(nodeToFree);
-		nodeToFree = listHead;
-	}
-}
-// added the movie to the text and binary file
-void AddMovieToFile(movie mv)
-{
-	FILE* fp = NULL;
-	fp = fopen("movies.txt", "a");
-	fprintf(fp, "%-3d %-30s %-15s\t %.2f$\t %-3d \t   %-2d/%-2d/%-4d    \t %d\n\n", mv.ID, mv.NameMovie, mv.Genre, mv.price,mv.LengthMovie, mv.ReleaseDate.day,mv.ReleaseDate.month,mv.ReleaseDate.year, mv.BeastSeller);
-	fclose(fp);
-	///
-	fp = fopen("movies.bin", "ab");
-	fwrite(&mv, sizeof(movie), 1, fp);
-	fclose(fp);
-}
-//added movie to the end of the linked list
-void addMovieToEnd(Node* listHead, movie* value)
-{
-	Node* newNode = createNode(value); // it's going to be the last element in the list
 
-	while (listHead->next != NULL) // Finding the last element of the list (not the NULL).
-		listHead = listHead->next;
-
-	listHead->next = newNode;
-	newNode->previous = listHead;
-
-}
- //added movie to the start of the linked list
-void addMovieToStart(Node** listHeadPtr, movie* value)
+   while (Is_Program_On) {
+       if (Check_Register)
 {
 	Node* previousNodeHead = *listHeadPtr;
 	Node* newNodeHead = createNode(value);
 	newNodeHead->next = previousNodeHead;
 	*listHeadPtr = newNodeHead;
 }
-
 //load movies from file
 int play(Node** head)
 {
 	int count;
 	// Open the file for reading
-	FILE* fp = fopen("movies.bin", "rb");
+	FILE* fp = fopen(NameFileBIN, "rb");
 	if (fp == NULL)
 	{
 		printf("Error: unable to open file for reading\n");
@@ -145,11 +65,10 @@ void displayMovie(Node* listHead)
 	int count = 0;
 	while (currentNode != NULL)
 	{
-		printf("%d:  ID: %d, Movie name: %s, Genre: %s, Price: %.2lf$, Length: %d, Date: %d/%d/%d, Beast seller: %d \n-> ", count, currentNode->data.ID, currentNode->data.NameMovie, currentNode->data.Genre, currentNode->data.price, currentNode->data.LengthMovie, currentNode->data.ReleaseDate.day, currentNode->data.ReleaseDate.month, currentNode->data.ReleaseDate.year, currentNode->data.BeastSeller);
+        printf("%d:  ID: %d, Movie name: %s, Genre: %s, Price: %.2lf$, Length: %d, Date: %d/%d/%d, Beast seller: %s \n-> ", count, currentNode->data.ID, currentNode->data.NameMovie, currentNode->data.Genre, currentNode->data.price, currentNode->data.LengthMovie, currentNode->data.ReleaseDate.day, currentNode->data.ReleaseDate.month, currentNode->data.ReleaseDate.year, currentNode->data.BeastSeller ? "True" : "False");
 		currentNode = currentNode->next;
 		count++;
 	}
-	printf("  NULL\n\n");
 }
 //initialize movie
 void InitMovie(movie* mv,int ID)
@@ -240,19 +159,72 @@ void DeleteMovie(int ID, Node** head) {
 			arrmovie = arrmovie->next;
 		}
 	}
-	// movie is in between
+       else
+       {
+           Check_Register = 0;
+           printf("\n============> STACK MENU <============\n");
+           printf("Choose your operation:\n\n");
+           printf("To search a movie by name enter 1\n"); // all lvls
+           printf("To search a movie by genre enter 2\n"); // all lvls
+           printf("To search a movie by price range enter 3\n"); // all lvls
+           printf("To see all the best sellers movies enter 4\n"); // all lvls
+           printf("To search for a movie by release date enter 5\n"); // all lvls
+           printf("To display all movies available enter 6\n"); //all lvls
+           printf("to switch accounts enter 9\n"); //all lvls
+           if(userlvl>=2)
+                printf("To enter employees menu enter 7\n");//lvl 2 and above
+           if(userlvl>=3)
+                printf("To enter manager's menu enter 0\n"); //lvl 3 only
+           printf("To exit enter 8\n"); //all levels
+           scanf("%d%*c", &choice1);
+
+           switch (choice1) {
+           case 1:
+               printf("What movie would you like to watch? \n");
+               scanf("%[^\n]%*c", keyToFind);
+               searchMovieByName(keyToFind);
+               break;
+
+           case 2:
+               printf("What genre of movies would you like to watch? \n");
+               scanf("%[^\n]%*c", keyToFind);
+               searchByGenre(keyToFind);
+               break;
+
+           case 3:
+               printf("Type in the max price you will like to see: \n");
+               scanf("%d%*c", &num1);
+               printf("Type in the min price you would like to see: \n");
+               scanf("%d%*c", &num2);
+               searchMovieByPrice(num2, num1);
+               break;
+
+           case 4:
+               searchByBestSeller();
+               break;
+
+           case 5:
+               printf("what year of release would you like to see movies from? \n");
+               scanf("%d%*c", &num1);
+               searchMovieByDate(num1);
+               break;
+           case 6:
+               displayMovie(arrMovies);
+               break;
+
+           case 7:
+               if (userlvl < 2) {
+                   printf("Sorry, you don't have permission  (′⌒`) \n\n");
+                   choice2 = -1;
+               }
 	else {
-		Node* prev = arrmovie->previous;
-		Node* next = arrmovie->next;
-		prev->next = next;
-		next->previous = prev;
-		free(arrmovie);
-		if (remove("movies.txt") != 0) printf("movies.txt not exist\n");
-		if (remove("movies.bin") != 0) printf("movies.bin not exist\n");
-		arrmovie = *head;
-		while (arrmovie != NULL) {
-			AddMovieToFile(arrmovie->data);
-			arrmovie = arrmovie->next;
+                   printf("\n======>Employees menu<======\n");
+                   printf("To add a new movie enter 1 \n");
+                   printf("To delete a movie enter 2 \n");
+                   printf("To edit a movie enter 3 \n");
+                   printf("To create a new costumer account enter 4 \n");
+                   printf("To return the regular menu enter 9 \n");
+                   scanf("%d%*c", &choice2);
 		}
 	}
 }
@@ -260,13 +232,6 @@ void DeleteMovie(int ID, Node** head) {
 void searchByPrice(Node* head, float minPrice, float maxPrice) {
 	Node* current = head;
 
-	int i = 1;
-	printf("Here are all the movies that match your pricing range: \n");
-	while (current != NULL) {
-		if (current->data.price >= minPrice && current->data.price <= maxPrice) {
-			printf("%d) ", i);
-			printMovie(current->data);
-			i += 1;
 		}
 		current = current->next;
 	}
@@ -274,25 +239,11 @@ void searchByPrice(Node* head, float minPrice, float maxPrice) {
 
 int main()
 {
-	Node* ActionMovie = NULL;
-	
-	movie mv;
-	int x;
-	int count = play(&ActionMovie);
-	displayMovie(ActionMovie);
-	scanf("%d", &x);
-	DeleteMovie(x, &ActionMovie);
-	displayMovie(ActionMovie);
-	count++;
-	//InitMovie(&mv, count);
-	//if (ActionMovie == NULL)
-	//	addMovieToStart(&ActionMovie, &mv);
-	//else
-	//	addMovieToEnd(ActionMovie, &mv);
-	//AddMovieToFile(mv);
-	//printf("Your movie are successfully added\n");
-	//displayMovie(ActionMovie);
-	//freeMovieList(ActionMovie);
-	//gchjgcfjhfgjfg
+           Is_Program_On = 0;
+           printf("too many attmpts :( \n");
+       }
+   }
+    freeMovieList(arrMovies);
+    freeUsersList(arrUsers);
 	return 0;
 }
